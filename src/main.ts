@@ -14,6 +14,8 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	jobTemplatesCache: { id: string; label: string }[] = []
 	private pollTimer: NodeJS.Timeout | undefined
 	currentStatus: any = null
+	private jobTemplatesCacheRawIds: Set<string> = new Set()
+
 
 
 	constructor(internal: unknown) {
@@ -23,9 +25,6 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	async init(config: ModuleConfig): Promise<void> {
 		this.config = config
 		this.dynamicVariables = []
-
-		this.jobTemplatesCache = await this.getTemplateChoices()
-		this.log('debug', `Job Templates: ${this.jobTemplatesCache}`)
 
 		this.updateStatus(InstanceStatus.Ok)
 
@@ -82,6 +81,7 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 			// Trigger Feedback Updates
 			this.checkFeedbacks()
 			this.updateAllVariables()
+			await this.syncTemplateChoices()
 
 
 		} catch (error) {
@@ -234,23 +234,39 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 
 	}
 
-
-	async getTemplateChoices(): Promise<{ id: string; label: string }[]> {
+	async syncTemplateChoices(): Promise<void> {
 		try {
 			const data = await this.apiGet('JobTemplates')
 
 			if (!data || !Array.isArray(data)) {
 				this.log('error', 'JobTemplates API returned unexpected data')
-				return []
+				return
 			}
 
-			return data.map((item) => ({
-				id: item.Id,
-				label: item.Name,
-			}))
+			// Baue neue ID-Liste zur Prüfung
+			const newIds = new Set(data.map((item) => item.Id))
+
+			// Vergleiche, ob sich die ID-Liste geändert hat
+			const idsEqual =
+				newIds.size === this.jobTemplatesCacheRawIds.size &&
+				[...newIds].every((id) => this.jobTemplatesCacheRawIds.has(id))
+
+			if (!idsEqual) {
+				this.jobTemplatesCache = data.map((item) => ({
+					id: item.Id,
+					label: item.Name,
+				}))
+				this.jobTemplatesCacheRawIds = newIds
+
+				this.log('info', `Updated JobTemplates Cache with ${data.length} entries`)
+
+				// Companion Dropdowns synchronisieren
+				this.updateActions()
+			} else {
+				this.log('debug', 'JobTemplates unchanged, no update needed.')
+			}
 		} catch (error) {
-			this.log('error', `Failed to fetch JobTemplates: ${error}`)
-			return []
+			this.log('error', `Failed to sync JobTemplates: ${error}`)
 		}
 	}
 

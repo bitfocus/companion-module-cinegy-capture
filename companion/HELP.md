@@ -1,3 +1,5 @@
 ## Cinegy Capture
 
-- Allows to send Text Messages
+-  Start / Stop / Split
+-  Load Template
+-  Start with Template

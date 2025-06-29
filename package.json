@@ -1,6 +1,6 @@
 {
-	"name": "-textmebot-whatsappapi",
-	"version": "1.0.3",
+	"name": "-cinegy-capture",
+	"version": "1.0.0",
 	"main": "dist/main.js",
 	"type": "module",
 	"scripts": {
@@ -16,7 +16,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-textmebot-whatsappapi.git"
+		"url": "git+https://github.com/bitfocus/companion-module-cinegy-capture.git"
 	},
 	"dependencies": {
 		"@companion-module/base": "~1.11.2",
