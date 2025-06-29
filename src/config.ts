@@ -9,7 +9,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 	return [
 		{
 			type: 'textinput',
-			id: 'Host',
+			id: 'host',
 			label: 'Host',
 			default: '127.0.0.1',
 			required: true,
@@ -18,7 +18,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 		},
 		{
 			type: 'number',
-			id: 'EngineNumber',
+			id: 'engine',
 			label: 'Capture Engine Number',
 			min: 1,
 			max: 9,
