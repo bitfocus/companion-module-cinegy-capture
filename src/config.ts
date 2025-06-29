@@ -24,7 +24,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			max: 9,
 			default: 1,
 			width: 1,
-			required: true, 
+			required: true,
 			step: 1
 		},
 	]
