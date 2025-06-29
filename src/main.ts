@@ -33,7 +33,6 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 		this.updateFeedbacks() // export feedbacks
 		this.updateVariableDefinitions() // export variable definitions
 
-		// Starte das Polling jede Sekunde
 		this.pollTimer = setInterval(() => this.pollStatus(), 1000)
 
 	}
@@ -103,7 +102,6 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				}
 			})
 
-			// Status prüfen, um Fehler sauber abzufangen
 			if (!response.ok) {
 				this.log('error', `GET ${apimethod} failed with status ${response.status} ${response.statusText}`)
 				return null
@@ -144,11 +142,9 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 			const text = await response.text()
 			this.log('debug', `Response-Text: ${text}`)
 
-			// Versuche JSON zu parsen
 			try {
 				return JSON.parse(text)
 			} catch {
-				// Kein valides JSON → gib Text zurück
 				return text
 			}
 		} catch (error) {
@@ -167,7 +163,6 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				headers: {
 					'Content-Type': 'application/json',
 				}
-				// Kein "body"-Feld
 			})
 
 			const text = await response.text()
@@ -233,11 +228,10 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 
 		const date = new Date(timestamp)
 
-		// Beispiel: ISO-Format
+
 		return date.toLocaleString()
 
-		// Alternativ lokal:
-		// return date.toLocaleString()
+
 	}
 
 

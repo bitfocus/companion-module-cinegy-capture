@@ -105,7 +105,7 @@ export function UpdateActions(self: ModuleInstance): void {
 					type: 'dropdown',
 					label: 'Select Job Template',
 					default: '',
-					choices: self.jobTemplatesCache, // synchron aus Cache, wie bei deiner Start-Action
+					choices: self.jobTemplatesCache, 
 				},
 			],
 			callback: async (event) => {
@@ -118,7 +118,6 @@ export function UpdateActions(self: ModuleInstance): void {
 
 				self.log('info', `Sending LoadJobById with Template ID: ${selectedTemplateId}`)
 
-				// Hinweis: Diese API erwartet einen STRING, keine JSON-Objektstruktur.
 				const result = await self.apiPost('LoadJobById', selectedTemplateId)
 
 				if (result) {
