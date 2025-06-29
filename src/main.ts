@@ -243,10 +243,8 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				return
 			}
 
-			// Baue neue ID-Liste zur Prüfung
 			const newIds = new Set(data.map((item) => item.Id))
 
-			// Vergleiche, ob sich die ID-Liste geändert hat
 			const idsEqual =
 				newIds.size === this.jobTemplatesCacheRawIds.size &&
 				[...newIds].every((id) => this.jobTemplatesCacheRawIds.has(id))
@@ -260,7 +258,6 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 
 				this.log('info', `Updated JobTemplates Cache with ${data.length} entries`)
 
-				// Companion Dropdowns synchronisieren
 				this.updateActions()
 			} else {
 				this.log('debug', 'JobTemplates unchanged, no update needed.')
