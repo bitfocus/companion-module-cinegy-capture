@@ -242,22 +242,13 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				this.log('error', 'JobTemplates API returned unexpected data')
 				return
 			}
-
 			const newIds = new Set(data.map((item) => item.Id))
-
 			const idsEqual =
-				newIds.size === this.jobTemplatesCacheRawIds.size &&
-				[...newIds].every((id) => this.jobTemplatesCacheRawIds.has(id))
-
+				newIds.size === this.jobTemplatesCacheRawIds.size && [...newIds].every((id) => this.jobTemplatesCacheRawIds.has(id))
 			if (!idsEqual) {
-				this.jobTemplatesCache = data.map((item) => ({
-					id: item.Id,
-					label: item.Name,
-				}))
+				this.jobTemplatesCache = data.map((item) => ({ id: item.Id, label: item.Name, }))
 				this.jobTemplatesCacheRawIds = newIds
-
 				this.log('info', `Updated JobTemplates Cache with ${data.length} entries`)
-
 				this.updateActions()
 			} else {
 				this.log('debug', 'JobTemplates unchanged, no update needed.')
