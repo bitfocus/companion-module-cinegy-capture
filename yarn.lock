@@ -5,24 +5,6 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"-cinegy-capture@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "-cinegy-capture@workspace:."
-  dependencies:
-    "@companion-module/base": "npm:~1.11.2"
-    "@companion-module/tools": "npm:^2.1.1"
-    "@types/node": "npm:^22.10.2"
-    eslint: "npm:^9.17.0"
-    husky: "npm:^9.1.7"
-    lint-staged: "npm:^15.2.11"
-    node-fetch: "npm:^3.3.2"
-    prettier: "npm:^3.4.2"
-    rimraf: "npm:^6.0.1"
-    typescript: "npm:~5.5.4"
-    typescript-eslint: "npm:^8.18.1"
-  languageName: unknown
-  linkType: soft
-
 "@companion-module/base@npm:~1.11.2":
   version: 1.11.3
   resolution: "@companion-module/base@npm:1.11.3"
@@ -946,6 +928,24 @@ __metadata:
   checksum: 10c0/3058da7a5f4934b87cf6a90ef5fb68ebc5f7d06f143ed5a4650208e5d7acae47bc03ec844b29fbf5ba7e46e8daa6acecc878f7983a4f4bb7271593da91e61ff5
   languageName: node
   linkType: hard
+
+"cinegy-capture@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "cinegy-capture@workspace:."
+  dependencies:
+    "@companion-module/base": "npm:~1.11.2"
+    "@companion-module/tools": "npm:^2.1.1"
+    "@types/node": "npm:^22.10.2"
+    eslint: "npm:^9.17.0"
+    husky: "npm:^9.1.7"
+    lint-staged: "npm:^15.2.11"
+    node-fetch: "npm:^3.3.2"
+    prettier: "npm:^3.4.2"
+    rimraf: "npm:^6.0.1"
+    typescript: "npm:~5.5.4"
+    typescript-eslint: "npm:^8.18.1"
+  languageName: unknown
+  linkType: soft
 
 "cli-cursor@npm:^5.0.0":
   version: 5.0.0
