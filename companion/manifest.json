@@ -3,7 +3,7 @@
 	"name": "cinegy-capture",
 	"shortname": "cinegy-capture",
 	"description": "Controls Cinegy Capture Instances",
-	"version": "1.0.0",
+	"version": "0.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-cinegy-capture.git",
 	"bugs": "https://github.com/bitfocus/companion-module-cinegy-capture/issues",
@@ -22,5 +22,5 @@
 	"legacyIds": [],
 	"manufacturer": "Cinegy",
 	"products": ["Capture"],
-	"keywords": []
+	"keywords": ["Ingest", "Recording", "Capture Pro", "CapturePro", "Manager", "Control"]
 }

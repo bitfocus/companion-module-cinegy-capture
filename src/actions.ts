@@ -15,12 +15,12 @@ export function UpdateActions(self: ModuleInstance): void {
 						{ id: 'Stop', label: 'Stop' },
 						{ id: 'Split', label: 'Split' },
 					],
-					default: 'Start'
-				}
+					default: 'Start',
+				},
 			],
 			callback: async (event) => {
 				const o = event.options
-				const extractedMethod = await self.parseVariablesInString(o.method as string)
+				const extractedMethod = o.method as string
 				await self.apiPostNoBody(extractedMethod)
 			},
 		},
@@ -64,31 +64,31 @@ export function UpdateActions(self: ModuleInstance): void {
 
 				if (fileName) {
 					customMetadata.push({
-						Name: "FileName",
-						Value: fileName
+						Name: 'FileName',
+						Value: fileName,
 					})
 				}
 				if (clipName) {
 					customMetadata.push({
-						Name: "ClipName",
-						Value: clipName
+						Name: 'ClipName',
+						Value: clipName,
 					})
 				}
 				if (tapeName) {
 					customMetadata.push({
-						Name: "TapeName",
-						Value: tapeName
+						Name: 'TapeName',
+						Value: tapeName,
 					})
 				}
 
 				const body = {
 					TemplateId: selectedTemplateId || undefined,
-					CustomMetadata: customMetadata.length > 0 ? customMetadata : undefined
+					CustomMetadata: customMetadata.length > 0 ? customMetadata : undefined,
 				}
 
 				self.log('info', `Starting capture session with payload: ${JSON.stringify(body)}`)
 
-				const result = await self.apiPost('StartByJobTemplateIdEx', body)
+				const result = await self.apiPost('StartByJobTemplateIdEx', JSON.stringify(body))
 
 				if (result) {
 					self.log('info', `Capture session started successfully: ${JSON.stringify(result)}`)
@@ -105,7 +105,7 @@ export function UpdateActions(self: ModuleInstance): void {
 					type: 'dropdown',
 					label: 'Select Job Template',
 					default: '',
-					choices: self.jobTemplatesCache, 
+					choices: self.jobTemplatesCache,
 				},
 			],
 			callback: async (event) => {
@@ -118,7 +118,7 @@ export function UpdateActions(self: ModuleInstance): void {
 
 				self.log('info', `Sending LoadJobById with Template ID: ${selectedTemplateId}`)
 
-				const result = await self.apiPost('LoadJobById', selectedTemplateId)
+				const result = await self.apiPost('LoadJobById', selectedTemplateId as string)
 
 				if (result) {
 					self.log('info', `LoadJobById executed successfully: ${JSON.stringify(result)}`)
@@ -127,10 +127,5 @@ export function UpdateActions(self: ModuleInstance): void {
 				}
 			},
 		},
-
-
-
 	})
 }
-
-

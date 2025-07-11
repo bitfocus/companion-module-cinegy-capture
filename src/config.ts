@@ -1,8 +1,8 @@
 import { Regex, type SomeCompanionConfigField } from '@companion-module/base'
 
 export interface ModuleConfig {
-	host: string,
-	engine: number,
+	host: string
+	engine: number
 }
 
 export function GetConfigFields(): SomeCompanionConfigField[] {
@@ -23,9 +23,9 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			min: 1,
 			max: 9,
 			default: 1,
-			width: 1,
+			width: 2,
 			required: true,
-			step: 1
+			step: 1,
 		},
 	]
 }

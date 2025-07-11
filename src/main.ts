@@ -5,8 +5,6 @@ import { UpgradeScripts } from './upgrades.js'
 import { UpdateActions } from './actions.js'
 import { UpdateFeedbacks } from './feedbacks.js'
 
-import fetch from 'node-fetch'
-
 export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	dynamicVariables: string[] = []
 	variableUpdateEnabled: boolean = false
@@ -16,8 +14,6 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	currentStatus: any = null
 	private jobTemplatesCacheRawIds: Set<string> = new Set()
 
-
-
 	constructor(internal: unknown) {
 		super(internal)
 	}
@@ -26,14 +22,12 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 		this.config = config
 		this.dynamicVariables = []
 
-		this.updateStatus(InstanceStatus.Ok)
+		this.updateStatus(InstanceStatus.Connecting)
 
 		this.updateActions() // export actions
 		this.updateFeedbacks() // export feedbacks
 		this.updateVariableDefinitions() // export variable definitions
-
-		this.pollTimer = setInterval(() => this.pollStatus(), 1000)
-
+		this.pollTimer = setInterval(() => void this.pollStatus(), 1000)
 	}
 	// When module gets deleted
 	async destroy(): Promise<void> {
@@ -43,7 +37,6 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 			clearInterval(this.pollTimer)
 			this.pollTimer = undefined
 		}
-
 
 		this.log('debug', 'destroy')
 	}
@@ -69,26 +62,21 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 		UpdateVariableDefinitions(this)
 	}
 
-
-
 	async pollStatus(): Promise<void> {
 		try {
 			const status = await this.apiGet('Status')
 			this.log('debug', `Polled Status: ${JSON.stringify(status)}`)
 
 			this.currentStatus = status
-
 			// Trigger Feedback Updates
 			this.checkFeedbacks()
 			this.updateAllVariables()
 			await this.syncTemplateChoices()
-
-
 		} catch (error) {
 			this.log('error', `Polling error: ${error}`)
+			this.updateStatus(InstanceStatus.Disconnected)
 		}
 	}
-
 
 	async apiGet(apimethod: string): Promise<any> {
 		this.log('debug', `Send GET request to ${apimethod}`)
@@ -98,13 +86,16 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 			const response = await fetch(url, {
 				method: 'GET',
 				headers: {
-					'Accept': 'application/json'
-				}
+					Accept: 'application/json',
+				},
 			})
 
 			if (!response.ok) {
 				this.log('error', `GET ${apimethod} failed with status ${response.status} ${response.statusText}`)
+				this.updateStatus(InstanceStatus.Disconnected)
 				return null
+			} else {
+				this.updateStatus(InstanceStatus.Ok)
 			}
 
 			try {
@@ -117,14 +108,14 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				this.log('debug', `Response Text: ${text}`)
 				return text
 			}
-
 		} catch (error) {
 			this.log('error', `GET ${apimethod} failed: ${error}`)
+			this.updateStatus(InstanceStatus.Disconnected)
 			return null
 		}
 	}
 
-	async apiPost(apimethod: string, body: any): Promise<any> {
+	async apiPost(apimethod: string, body: string): Promise<any> {
 		this.log('debug', `Send POST request to ${apimethod}`)
 		const url = `http://${this.config.host}:800${this.config.engine}/REST/${apimethod}`
 		this.log('debug', `API Url: ${url}`)
@@ -162,7 +153,7 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-				}
+				},
 			})
 
 			const text = await response.text()
@@ -228,10 +219,7 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 
 		const date = new Date(timestamp)
 
-
 		return date.toLocaleString()
-
-
 	}
 
 	async syncTemplateChoices(): Promise<void> {
@@ -244,9 +232,10 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 			}
 			const newIds = new Set(data.map((item) => item.Id))
 			const idsEqual =
-				newIds.size === this.jobTemplatesCacheRawIds.size && [...newIds].every((id) => this.jobTemplatesCacheRawIds.has(id))
+				newIds.size === this.jobTemplatesCacheRawIds.size &&
+				[...newIds].every((id) => this.jobTemplatesCacheRawIds.has(id))
 			if (!idsEqual) {
-				this.jobTemplatesCache = data.map((item) => ({ id: item.Id, label: item.Name, }))
+				this.jobTemplatesCache = data.map((item) => ({ id: item.Id, label: item.Name }))
 				this.jobTemplatesCacheRawIds = newIds
 				this.log('info', `Updated JobTemplates Cache with ${data.length} entries`)
 				this.updateActions()
@@ -257,8 +246,6 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 			this.log('error', `Failed to sync JobTemplates: ${error}`)
 		}
 	}
-
-
 }
 
 runEntrypoint(ModuleInstance, UpgradeScripts)

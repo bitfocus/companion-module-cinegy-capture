@@ -1,8 +1,11 @@
 {
 	"name": "cinegy-capture",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"main": "dist/main.js",
 	"type": "module",
+	"engines": {
+		"node": ">=22.0.0"
+	},
 	"scripts": {
 		"postinstall": "husky",
 		"format": "prettier -w .",
@@ -19,8 +22,7 @@
 		"url": "git+https://github.com/bitfocus/companion-module-cinegy-capture.git"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.11.2",
-		"node-fetch": "^3.3.2"
+		"@companion-module/base": "~1.11.2"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^2.1.1",
