@@ -2,9 +2,6 @@ import { combineRgb } from '@companion-module/base'
 import type { ModuleInstance } from './main.js'
 import sharp from 'sharp'
 
-import got from 'got'
-//const Jimp = JimpRaw.default || JimpRaw
-
 export function UpdateFeedbacks(self: ModuleInstance): void {
 	self.setFeedbackDefinitions({
 		has_license_feedback: {
@@ -52,9 +49,14 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 				const previewUrl = `http://${self.config.host}:800${self.config.engine}/REST/Preview`
 
 				try {
-					const response = await got.get(previewUrl, { responseType: 'buffer' })
+					const response = await fetch(previewUrl)
+					if (!response.ok) {
+						throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+					}
 
-					const resizedBuffer = await sharp(response.body)
+					const buffer = Buffer.from(await response.arrayBuffer())
+
+					const resizedBuffer = await sharp(buffer)
 						.resize({
 							width: feedback.image?.width ?? 72,
 							height: feedback.image?.height ?? 72,
