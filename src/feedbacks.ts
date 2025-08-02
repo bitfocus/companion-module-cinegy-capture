@@ -1,6 +1,8 @@
 import { combineRgb } from '@companion-module/base'
 import type { ModuleInstance } from './main.js'
-import sharp from 'sharp'
+
+// @ts-expect-error Error is expected due to strange import behaviour of the image-rs wrapper of @julusian
+import { ImageTransformer } from '@julusian/image-rs'
 
 export function UpdateFeedbacks(self: ModuleInstance): void {
 	self.setFeedbackDefinitions({
@@ -39,7 +41,6 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 			options: [],
 			callback: () => self.currentStatus?.PreviewState === 'Started',
 		},
-
 		preview_image: {
 			type: 'advanced',
 			name: 'Live Preview Image',
@@ -47,26 +48,17 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 			options: [],
 			callback: async (feedback) => {
 				const previewUrl = `http://${self.config.host}:800${self.config.engine}/REST/Preview`
-
 				try {
 					const response = await fetch(previewUrl)
 					if (!response.ok) {
 						throw new Error(`HTTP ${response.status}: ${response.statusText}`)
 					}
-
 					const buffer = Buffer.from(await response.arrayBuffer())
 
-					const resizedBuffer = await sharp(buffer)
-						.resize({
-							width: feedback.image?.width ?? 72,
-							height: feedback.image?.height ?? 72,
-							fit: 'inside',
-						})
-						.png()
-						.toBuffer()
-
-					const png64 = `data:image/png;base64,${resizedBuffer.toString('base64')}`
-
+					const png64 = await ImageTransformer.fromEncodedImage(buffer)
+						.scale(feedback.image?.width ?? 72, feedback.image?.height ?? 72, 'Fit')
+						.toDataUrl('png')
+					self.log('debug', png64)
 					return { png64 }
 				} catch (err) {
 					self.log('error', `Preview image error: ${err}`)
